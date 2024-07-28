@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Líneas con D3.js</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .chart {
+            margin-top: 50px;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Gráfico de Líneas con D3.js</h1>
+                <div id="chart" class="chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Configuración del gráfico
+            const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+            const width = 960 - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+
+            const svg = d3.select("#chart").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Generación de datos al azar
+            const data = Array.from({ length: 50 }, (_, i) => ({
+                x: i,
+                y: Math.random() * 100
+            }));
+
+            // Escalas
+            const x = d3.scaleLinear()
+                .domain(d3.extent(data, d => d.x))
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.y)])
+                .range([height, 0]);
+
+            // Ejes
+            const xAxis = d3.axisBottom(x);
+            const yAxis = d3.axisLeft(y);
+
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(xAxis);
+
+            svg.append("g")
+                .call(yAxis);
+
+            // Línea
+            const line = d3.line()
+                .x(d => x(d.x))
+                .y(d => y(d.y));
+
+            svg.append("path")
+                .datum(data)
+                .attr("class", "line")
+                .attr("d", line);
+        });
+    </script>
+</body>
+</html>
